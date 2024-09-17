@@ -21,13 +21,17 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="CQRS\Query\" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="CQRS\Query\" />
+      <ProjectReference Include="..\Inno_Shop.Auth.Service\Inno_Shop.Auth.Service.csproj" />
     </ItemGroup>
 
 </Project>
