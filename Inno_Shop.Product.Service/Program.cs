@@ -1,9 +1,12 @@
+using System.Reflection;
+using FluentValidation;
 using Inno_Shop.Product.Service.Data;
 using Inno_Shop.Product.Service.Helpers.UnitOfWork;
 using Inno_Shop.Product.Service.Helpers.Validation;
 using Inno_Shop.Product.Service.Interfaces;
 using Inno_Shop.Product.Service.Interfaces.Implementations;
-using Inno_Shop.Product.Service.Model;
+using Inno_Shop.Product.Service.Pipeline;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +24,8 @@ builder.Services.AddDbContext<MainDbContext>(opt =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<ProductValidator>();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineStep<,>));
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
