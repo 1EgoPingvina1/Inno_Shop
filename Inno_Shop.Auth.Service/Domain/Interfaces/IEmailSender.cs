@@ -1,4 +1,4 @@
-﻿namespace Inno_Shop.Authentification.Interfaces;
+﻿namespace Inno_Shop.Authentification.Domain.Interfaces;
 
 public interface IEmailSender
 {

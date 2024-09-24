@@ -1,13 +1,11 @@
-using System.Reflection;
-using FluentValidation;
-using Inno_Shop.Product.Service.Data;
-using Inno_Shop.Product.Service.Helpers.UnitOfWork;
-using Inno_Shop.Product.Service.Helpers.Validation;
+using System.Text;
+using Inno_Shop.Product.Service.Extensions;
 using Inno_Shop.Product.Service.Interfaces;
 using Inno_Shop.Product.Service.Interfaces.Implementations;
-using Inno_Shop.Product.Service.Pipeline;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Inno_Shop.Product.Service.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,19 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<MainDbContext>(opt =>
-{
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("MainConnection"));
-});
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddTransient<ProductValidator>();
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineStep<,>));
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-
+builder.Services.AddSwagger();
+builder.Services.AddAuthenticationService(builder.Configuration);
+builder.Services.AddApplicationServices(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,9 +27,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<AuthorizationMiddleware>();
+app.UseMiddleware<ExceptionHadlingMiddleware>();
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllers();
 
 app.Run();

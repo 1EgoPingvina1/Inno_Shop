@@ -6,5 +6,9 @@ namespace Inno_Shop.Product.Service.CQRS.Command;
 
 public class CreateProductCommand : IRequest<Unit>
 {
-    public ProductDTO ProductDto { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public decimal Price { get; set; }
+    public string CreatedByUserId { get; set; }
+
 }

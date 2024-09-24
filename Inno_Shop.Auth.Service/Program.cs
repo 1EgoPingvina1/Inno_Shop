@@ -1,19 +1,15 @@
 using System.Reflection;
 using System.Text;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Inno_Shop.Authentification.Data;
-using Inno_Shop.Authentification.Data.Services;
+using Inno_Shop.Authentification.Domain.Interfaces;
+using Inno_Shop.Authentification.Domain.Models;
 using Inno_Shop.Authentification.Domain.Services;
-using Inno_Shop.Authentification.DTO;
-using Inno_Shop.Authentification.Infrastructure.Validation;
-using Inno_Shop.Authentification.Interfaces;
-using Inno_Shop.Authentification.Models;
+using Inno_Shop.Authentification.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using MediatR;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +19,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<IdentityContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
 
@@ -74,9 +69,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IAuthRepository,AuthRepository>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddTransient<RegisterValidator>();
-
-// builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterValidator>());
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
@@ -90,7 +83,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

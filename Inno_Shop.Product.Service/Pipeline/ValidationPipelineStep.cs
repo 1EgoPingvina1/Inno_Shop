@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Inno_Shop.Product.Service.Exceptions;
 using MediatR;
 
 namespace Inno_Shop.Product.Service.Pipeline;
@@ -12,7 +13,6 @@ public class ValidationPipelineStep<TRequest, TResponse> : IPipelineBehavior<TRe
     {
         _validators = validators;
     }
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (_validators.Any())
@@ -23,8 +23,8 @@ public class ValidationPipelineStep<TRequest, TResponse> : IPipelineBehavior<TRe
 
             if (failures.Any())
             {
-                //var props = failures.Select(x => new InvalidModelProperty(x.PropertyName, x.ErrorMessage));
-                //throw new ScoprValidationException(props.ToArray());
+                var props = failures.Select(x => new InvalidModelProperty(x.PropertyName, x.ErrorMessage));
+                throw new InnoValidationExeption(props.ToArray());
             }
         }
 

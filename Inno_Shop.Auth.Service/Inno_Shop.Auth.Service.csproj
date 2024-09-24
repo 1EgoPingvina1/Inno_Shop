@@ -26,13 +26,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Application\Queries\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Application\Validators\" />
+      <Folder Include="Middleware\" />
     </ItemGroup>
 
 </Project>

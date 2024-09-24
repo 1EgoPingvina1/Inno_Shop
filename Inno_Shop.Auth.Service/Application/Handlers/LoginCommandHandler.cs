@@ -1,9 +1,7 @@
 ﻿using System.Security.Authentication;
-using Inno_Shop.Authentification.API.Errors;
 using Inno_Shop.Authentification.Application.Commands;
-using Inno_Shop.Authentification.DTO;
-using Inno_Shop.Authentification.Interfaces;
-using Inno_Shop.Authentification.Models;
+using Inno_Shop.Authentification.Domain.Interfaces;
+using Inno_Shop.Authentification.Presentation.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;

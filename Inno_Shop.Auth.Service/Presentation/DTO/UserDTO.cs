@@ -1,4 +1,4 @@
-﻿namespace Inno_Shop.Authentification.DTO;
+﻿namespace Inno_Shop.Authentification.Presentation.DTO;
 
 public class UserDTO
 {

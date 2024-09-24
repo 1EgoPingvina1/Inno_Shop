@@ -1,42 +1,30 @@
-﻿using AutoMapper;
-using Inno_Shop.Authentification.API.Errors;
-using Inno_Shop.Authentification.Application.Commands;
-using Inno_Shop.Authentification.Data.Services;
-using Inno_Shop.Authentification.DTO;
-using Inno_Shop.Authentification.Interfaces;
-using Inno_Shop.Authentification.Models;
+﻿using Inno_Shop.Authentification.Application.Commands;
+using Inno_Shop.Authentification.Domain.Interfaces;
+using Inno_Shop.Authentification.Domain.Models;
+using Inno_Shop.Authentification.Presentation.DTO;
+using Inno_Shop.Authentification.Presentation.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inno_Shop.Authentification.Controllers;
+namespace Inno_Shop.Authentification.Presentation.Controllers;
 
-public class AccountController : ControllerBase
+[ApiController]
+[Route("/api/[controller]")]
+public class AccountController : Controller
 {
-    private readonly IMapper _mapper;
-    private readonly RoleManager<Role> _roleManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly ITokenService _tokenService;
     private readonly UserManager<User> _userManager;
-    private IMediator _mediatr;
-    private IAuthRepository _AuthRepository;
-
-    public AccountController(
-        ITokenService tokenService,
-        UserManager<User> userManager,
-        SignInManager<User> signInManager,
-        IMapper mapper, RoleManager<Role> roleManager, IMediator mediatr, IAuthRepository authRepository)
+    private readonly IMediator _mediatr;
+    private readonly IAuthRepository _authRepository;
+    public AccountController(UserManager<User> userManager, IMediator mediatr, IAuthRepository authRepository)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
-        _mapper = mapper;
-        _tokenService = tokenService;
-        _roleManager = roleManager;
         _mediatr = mediatr;
-        _AuthRepository = authRepository;
+        _authRepository = authRepository;
     }
-
+    
+    [NonAction]
     public async Task<bool> CheckEmailExists([FromQuery] string email)
     {
         return await _userManager.FindByEmailAsync(email) != null;
@@ -46,10 +34,11 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         => await _mediatr.Send(new LoginCommand() { LoginDto = loginDto });
     
-    [HttpPost("register")]
+    [HttpPost("Register")]
     public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDto)
         => await _mediatr.Send(new RegisterCommand() { Registerdto = registerDto });
     
+    [Authorize]
     [HttpGet("ConfirmEmail")]
     public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
     {
@@ -78,10 +67,10 @@ public class AccountController : ControllerBase
 
         // Send the token to the user's email
         // ...
-
+        
         return "Password reset token sent successfully";
     }
-
+    
     [HttpPost("ResetPassword")]
     public async Task<ActionResult<string>> ResetPassword(ResetPasswordDTO resetPasswordDto)
     {
@@ -102,11 +91,11 @@ public class AccountController : ControllerBase
     [HttpDelete("DeleteAccount")]
     public async Task<ActionResult> DeleteUser([FromQuery] Guid userId)
     {
-        return await _AuthRepository.DeleteAsync(userId);
+        return await _authRepository.DeleteAsync(userId);
     }
 
     [Authorize]
     [HttpPut("ChangeAccountDetails")]
     public async Task<ActionResult<UserDTO>> UpdateUserDetails([FromBody] UserUpdateDto userDto)
-        => await _AuthRepository.UpdateAsync(userDto);
+        => await _authRepository.UpdateAsync(userDto);
 }

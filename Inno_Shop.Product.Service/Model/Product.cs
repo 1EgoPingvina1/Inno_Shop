@@ -12,32 +12,32 @@ public class Product
     /// <summary>
     /// Gets the name of the product.
     /// </summary>
-    public string Name { get; private set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets the description of the product.
     /// </summary>
-    public string Description { get; private set; }
+    public string Description { get; set; }
 
     /// <summary>
     /// Gets the price of the product.
     /// </summary>
-    public decimal Price { get; private set; }
+    public decimal Price { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether the product is available.
     /// </summary>
-    public bool IsAvailable { get; private set; }
+    public bool IsAvailable { get; set; }
 
     /// <summary>
     /// Gets the ID of the user who created the product.
     /// </summary>
-    public string CreatedByUserId { get; private set; } 
+    public string CreatedByUserId { get;  set; } 
 
     /// <summary>
     /// Gets the date and time when the product was created.
     /// </summary>
-    public DateTime CreatedDate { get; private set; }
+    public DateTime CreatedDate { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Product"/> class.
@@ -45,15 +45,15 @@ public class Product
     /// <param name="name">The name of the product.</param>
     /// <param name="description">The description of the product.</param>
     /// <param name="price">The price of the product.</param>
-    /// <param name="isAvailable">A value indicating whether the product is available.</param>
     /// <param name="createdByUserId">The ID of the user who created the product.</param>
-    public Product(string name, string description, decimal price, bool isAvailable, string createdByUserId)
+    public Product()
     {
-        Name = name;
-        Description = description;
-        Price = price;
-        IsAvailable = isAvailable;
-        CreatedByUserId = createdByUserId;
+        Name = string.Empty;
+        Description = string.Empty;
+        Price = 0;
+        CreatedByUserId = string.Empty;
+        IsAvailable = true;
         CreatedDate = DateTime.UtcNow;
     }
+
 }

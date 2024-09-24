@@ -8,8 +8,4 @@ public class MainDbContext : DbContext
         
     }
     public DbSet<Model.Product> Products { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
 }

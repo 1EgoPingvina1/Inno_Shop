@@ -1,4 +1,4 @@
-﻿namespace Inno_Shop.Authentification.API.Errors;
+﻿namespace Inno_Shop.Authentification.Presentation.Errors;
 
 public class HttpExeption : Exception
 {

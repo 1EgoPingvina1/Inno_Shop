@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Inno_Shop.Authentification.DTO;
-using Inno_Shop.Authentification.Interfaces;
-using Inno_Shop.Authentification.Models;
+using Inno_Shop.Authentification.Domain.Interfaces;
+using Inno_Shop.Authentification.Presentation.DTO;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

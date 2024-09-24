@@ -1,12 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Inno_Shop.Authentification.Interfaces;
-using Inno_Shop.Authentification.Models;
-using Microsoft.Extensions.Configuration;
+using Inno_Shop.Authentification.Domain.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Inno_Shop.Authentification.Data.Services;
+namespace Inno_Shop.Authentification.Infrastructure.Security;
 
 public class TokenService : ITokenService
 {
@@ -41,6 +39,6 @@ public class TokenService : ITokenService
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
-        return tokenHandler.WriteToken(token);
+        return tokenHandler.WriteToken(token); 
     }
 }

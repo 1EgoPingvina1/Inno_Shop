@@ -1,13 +1,12 @@
-﻿using Inno_Shop.Authentification.DTO;
-using Inno_Shop.Authentification.Models;
+﻿using Inno_Shop.Authentification.Presentation.DTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Inno_Shop.Authentification.Interfaces;
+namespace Inno_Shop.Authentification.Domain.Interfaces;
 
 public interface IAuthRepository
 {
-    Task<ActionResult<UserDTO>> LoginAsync(LoginDTO loginDTO);
-    Task<ActionResult<UserDTO>> RegisterAsync(RegisterDTO registerDTO);
-    Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDTO);
+    Task<ActionResult<UserDTO>> LoginAsync(LoginDTO loginDto);
+    Task<ActionResult<UserDTO>> RegisterAsync(RegisterDTO registerDto);
+    Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDto);
     Task<ActionResult> DeleteAsync(Guid userId);
 }

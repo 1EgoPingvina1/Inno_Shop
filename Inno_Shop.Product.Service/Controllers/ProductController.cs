@@ -1,7 +1,12 @@
-﻿using Inno_Shop.Product.Service.CQRS.Command;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Inno_Shop.Product.Service.CQRS.Command;
+using Inno_Shop.Product.Service.CQRS.Query;
 using Inno_Shop.Product.Service.DTO;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Inno_Shop.Product.Service.Controllers;
 
@@ -15,39 +20,31 @@ public class ProductController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost]
+    [HttpPost("Create")]
     public async Task<Unit> CreateProduct(ProductDTO product)
-        => await _mediator.Send(new CreateProductCommand { ProductDto = product });
+    {
+        return await _mediator.Send(new CreateProductCommand
+        {
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+        });
+    }
+    
+    [HttpGet("GetProduct/{id}")]
+    public async Task<ActionResult<ProductDTO>> GetProduct(int id)
+    {
+        return Ok(await _mediator.Send(new GetProductQuery
+        {
+            ProductId = id
+        }));
+    }
+
+    [HttpGet("GetAllProducts")]
+    public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts() => Ok(await _mediator.Send(new GetProductsQuery()));
     
 
-    // [HttpGet("{id}")]
-    // public async Task<ActionResult<ProductDTO>> GetProduct(int id)
-    // {
-    //     var query = new GetProductQuery(id);
-    //     var product = await _mediator.Send(query);
-    //     return Ok(product);
-    // }
-    //
-    // [HttpGet]
-    // public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
-    // {
-    //     var query = new GetProductsQuery();
-    //     var products = await _mediator.Send(query);
-    //     return Ok(products);
-    // }
-    //
-    // [HttpPut("{id}")]
-    // public async Task<ActionResult<ProductDTO>> UpdateProduct(int id, UpdateProductCommand command)
-    // {
-    //     command.Id = id;
-    //     await _mediator.Send(command);
-    // }
-    //
-    // [HttpDelete("{id}")]
-    // public async Task<ActionResult> DeleteProduct(int id)
-    // {
-    //     var command = new DeleteProductCommand(id);
-    //     await _mediator.Send(command);
-    //     return NoContent();
-    // }
+    [HttpDelete("Delete/{id}")]
+    public async Task<Unit> DeleteProduct(int id) =>
+        await _mediator.Send(new DeleteProductCommand { ProductId = id });
 }

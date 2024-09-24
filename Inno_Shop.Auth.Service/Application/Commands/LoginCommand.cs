@@ -1,4 +1,4 @@
-﻿using Inno_Shop.Authentification.DTO;
+﻿using Inno_Shop.Authentification.Presentation.DTO;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,4 +1,4 @@
-﻿using Inno_Shop.Authentification.Models;
+﻿using Inno_Shop.Authentification.Domain.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

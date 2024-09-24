@@ -1,26 +1,27 @@
-﻿using Inno_Shop.Authentification.API.Errors;
-using Inno_Shop.Authentification.DTO;
+﻿using Inno_Shop.Authentification.Domain.Interfaces;
+using Inno_Shop.Authentification.Domain.Models;
+using Inno_Shop.Authentification.Infrastructure.Security;
 using Inno_Shop.Authentification.Infrastructure.Validation;
-using Inno_Shop.Authentification.Interfaces;
-using Inno_Shop.Authentification.Models;
+using Inno_Shop.Authentification.Presentation.DTO;
+using Inno_Shop.Authentification.Presentation.Errors;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inno_Shop.Authentification.Domain.Services;
-
 public class AuthRepository : IAuthRepository
 {
-    private UserManager<User> _userManager;
-    private RegisterValidator _registerValidator;
-    private ITokenService _tokenService;
-    private SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
+    private readonly RegisterValidator _registerValidator;
+    private readonly ITokenService _tokenService;
+    private readonly SignInManager<User> _signInManager;
 
-    public AuthRepository(UserManager<User> userManager, RegisterValidator registerValidator, ITokenService tokenService)
+    public AuthRepository(UserManager<User> userManager, RegisterValidator registerValidator, ITokenService tokenService, SignInManager<User> signInManager)
     {
         _userManager = userManager;
         _registerValidator = registerValidator;
         _tokenService = tokenService;
+        _signInManager = signInManager;
     }
 
     public async Task<ActionResult<UserDTO>> LoginAsync(LoginDTO loginDTO)
@@ -70,12 +71,12 @@ public class AuthRepository : IAuthRepository
 
     public async Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDTO)
     {
-        // var user = await _userManager.GetUserAsync(userDTO);
+        // var user = await _userManager.GetUserAsync(User.Identity.Name);
         // if (user is not null)
         // {
         //     user.PhoneNumber = userDTO.PhoneNumber;
-        //     
         //     await _userManager.UpdateAsync(user);
+        //     return new UserDTO(user));
         // }
         
         throw new HttpExeption(404, "User has not been found");
@@ -83,9 +84,9 @@ public class AuthRepository : IAuthRepository
 
     public async Task<ActionResult> DeleteAsync(Guid userId)
     {
-        // var user = await _userManager.FindByIdAsync(userId.ToString());
-        // if (user is not null)
-        //     await _userManager.DeleteAsync(user);
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is not null)
+            await _userManager.DeleteAsync(user);
         
         throw new HttpExeption(404,"User has not been found");
     }

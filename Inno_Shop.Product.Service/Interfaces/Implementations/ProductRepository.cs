@@ -1,28 +1,32 @@
 ﻿using Inno_Shop.Product.Service.Data;
+using Inno_Shop.Product.Service.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inno_Shop.Product.Service.Interfaces.Implementations;
 
 public class ProductRepository : IProductRepository
 {
-    private MainDbContext _context;
+    private readonly MainDbContext _context;
 
     public ProductRepository(MainDbContext context)
     {
         _context = context;
     }
 
-    public void AddProduct(Model.Product product)
+    public async Task<List<Model.Product>> GetAllAsync() => await _context.Products.ToListAsync();
+    
+    public async Task<Model.Product?> GetByIdAsync(int id) => await _context.Products.SingleOrDefaultAsync(x => x.Id == id); 
+    
+    public void AddProduct(Model.Product product) =>  _context.Products.Add(product);
+    
+    public async Task UpdateProduct(Model.Product product)
     {
-        _context.Products.Add(product);
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
     }
 
-    public void UpdateProduct(Model.Product product)
+    public async Task DeleteProduct(Model.Product product)
     {
-        throw new NotImplementedException();
-    }
-
-    public void DeleteProduct(Model.Product product)
-    {
-        throw new NotImplementedException();
-    }
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();    }
 }
