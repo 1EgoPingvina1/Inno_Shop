@@ -34,11 +34,11 @@ public class AccountController : Controller
     public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         => await _mediatr.Send(new LoginCommand() { LoginDto = loginDto });
     
+    [AllowAnonymous]
     [HttpPost("Register")]
     public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDto)
         => await _mediatr.Send(new RegisterCommand() { Registerdto = registerDto });
     
-    [Authorize]
     [HttpGet("ConfirmEmail")]
     public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
     {
@@ -55,6 +55,7 @@ public class AccountController : Controller
         return "Email confirmed successfully";
     }
     
+    [AllowAnonymous]
     [HttpPost("ForgotPassword")]
     public async Task<ActionResult<string>> ForgotPassword(ForgotPasswordDTO forgotPasswordDto)
     {
@@ -66,7 +67,7 @@ public class AccountController : Controller
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
         // Send the token to the user's email
-        // ...
+        // It is should be here
         
         return "Password reset token sent successfully";
     }
@@ -86,16 +87,10 @@ public class AccountController : Controller
 
         return "Password reset successfully";
     }
-
-    [Authorize]
+    
     [HttpDelete("DeleteAccount")]
-    public async Task<ActionResult> DeleteUser([FromQuery] Guid userId)
-    {
-        return await _authRepository.DeleteAsync(userId);
-    }
-
-    [Authorize]
+    public async Task<ActionResult> DeleteUser([FromQuery] Guid userId) => await _authRepository.DeleteAsync(userId);
+    
     [HttpPut("ChangeAccountDetails")]
-    public async Task<ActionResult<UserDTO>> UpdateUserDetails([FromBody] UserUpdateDto userDto)
-        => await _authRepository.UpdateAsync(userDto);
+    public async Task<ActionResult<UserDTO>> UpdateUserDetails([FromBody] UserUpdateDto userDto) => await _authRepository.UpdateAsync(userDto);
 }

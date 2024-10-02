@@ -4,7 +4,6 @@ using Inno_Shop.Authentification.Infrastructure.Security;
 using Inno_Shop.Authentification.Infrastructure.Validation;
 using Inno_Shop.Authentification.Presentation.DTO;
 using Inno_Shop.Authentification.Presentation.Errors;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,18 +68,21 @@ public class AuthRepository : IAuthRepository
         };
     }
 
-    public async Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDTO)
+    public Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDto)
     {
-        // var user = await _userManager.GetUserAsync(User.Identity.Name);
-        // if (user is not null)
-        // {
-        //     user.PhoneNumber = userDTO.PhoneNumber;
-        //     await _userManager.UpdateAsync(user);
-        //     return new UserDTO(user));
-        // }
-        
-        throw new HttpExeption(404, "User has not been found");
+        throw new NotImplementedException();
     }
+
+    // public async Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDTO)
+    // {
+    //     var user = await _userManager.GetUserAsync(User.Identity.Name);
+    //     if (user is null) 
+    //         throw new HttpExeption(404, "User has not been found");
+    //     user.PhoneNumber = userDTO.PhoneNumber;
+    //     await _userManager.UpdateAsync(user);
+    //     return user;
+    //
+    // }
 
     public async Task<ActionResult> DeleteAsync(Guid userId)
     {
