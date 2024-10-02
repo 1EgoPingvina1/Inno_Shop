@@ -1,0 +1,30 @@
+# This is a basic workflow to help you get started with Actions
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+
+jobs:
+  build-with-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chechout code
+      - uses: actions/checkout@v2
+      - name: Setup .NET 7
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '7.0'
+      - name: Build and test  
+        run: | 
+          dotnet build -c Release
+          dotnet test --filter Inno_Shop.Auth.Tests
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: test-results.xml
+
