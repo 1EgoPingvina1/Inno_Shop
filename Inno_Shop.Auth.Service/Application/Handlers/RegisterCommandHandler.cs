@@ -3,33 +3,18 @@ using Azure.Core;
 using FluentValidation;
 using Inno_Shop.Authentification.Application.Commands;
 using Inno_Shop.Authentification.Domain.Interfaces;
-using Inno_Shop.Authentification.Domain.Models;
-using Inno_Shop.Authentification.Infrastructure.Security;
-using Inno_Shop.Authentification.Infrastructure.Validation;
 using Inno_Shop.Authentification.Presentation.DTO;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inno_Shop.Authentification.Application.Handlers;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ActionResult<UserDTO>>
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly UserManager<User> _userManager;
-    private readonly ITokenService _tokenService;
-    private readonly RegisterValidator _registerValidator;
     private IAuthRepository _AuthRepository;
 
-    public RegisterCommandHandler(ITokenService tokenService, 
-        UserManager<User> userManager, 
-        RegisterValidator registerValidator, 
-        IServiceProvider serviceProvider, IAuthRepository authRepository) 
+    public RegisterCommandHandler(IAuthRepository authRepository) 
     {
-        _tokenService = tokenService;
-        _userManager = userManager;
-        _registerValidator = registerValidator;
-        _serviceProvider = serviceProvider;
         _AuthRepository = authRepository;
     }
     public async Task<ActionResult<UserDTO>> Handle(RegisterCommand request, CancellationToken cancellationToken)
