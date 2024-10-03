@@ -25,11 +25,9 @@ public class ProductController : ControllerBase
         });
     }
     
-    [AllowAnonymous]
     [HttpGet("GetProduct/{id}")]
     public async Task<ActionResult<ProductDTO>> GetProduct(int id) => Ok(await _mediator.Send(new GetProductQuery { ProductId = id }));
     
-    [AllowAnonymous]
     [HttpGet("GetAllProducts")]
     public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts() => Ok(await _mediator.Send(new GetProductsQuery()));
     
