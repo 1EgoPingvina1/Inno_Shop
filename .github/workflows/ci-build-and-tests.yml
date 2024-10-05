@@ -36,7 +36,7 @@ jobs:
 
       # Run unit tests (if you have them)
       - name: Run unit tests
-        run: dotnet test --no-build --verbosity normal --configuration Release
+        run: dotnet test --verbosity normal --configuration Release
 
       # Publish the app for deployment (optional step, based on your requirements)
       - name: Publish the API
