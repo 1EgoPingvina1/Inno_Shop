@@ -7,38 +7,46 @@ on:
       - master
 
 jobs:
-  build-and-test:
+  build:
+    # Define the OS to run on (Linux, Windows, or Mac)
     runs-on: ubuntu-latest
+
+    # Define environment variables
+    env:
+      DOTNET_NOLOGO: true
+
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup .NET 7
-        uses: actions/setup-dotnet@v2
+      # Set up .NET Core environment
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0'
+          dotnet-version: '7.x' # Use the version of .NET Core/SDK your project targets
 
-      - name: Restore NuGet packages
+      # Restore the dependencies for the solution
+      - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build and test
-        run: |
-          dotnet build -c Release
-          dotnet test --filter Inno_Shop.Auth.Tests
+      # Build the solution
+      - name: Build the solution
+        run: dotnet build --no-restore --configuration Release
 
-      - name: Upload test results
+      # Run unit tests (if you have them)
+      - name: Run unit tests
+        run: dotnet test --no-build --verbosity normal --configuration Release
+
+      # Publish the app for deployment (optional step, based on your requirements)
+      - name: Publish the API
+        run: dotnet publish --configuration Release --output ./output
+
+      # Example of uploading build artifacts (optional)
+      - name: Upload artifact
         uses: actions/upload-artifact@v3.2.1-node20
         with:
-          name: test-results
-          path: test-results.xml
+          name: PublishedAPI
+          path: ./output
 
-      - name: Security scan
-        run: |
-          dotnet tool install -g dotnet-security
-          dotnet security scan
-
-      - name: Code coverage
-        run: |
-          dotnet tool install -g dotnet-coverage
-          dotnet coverage collect
-          dotnet coverage report
+      # Example: Deploy to a hosting platform (e.g., Azure, AWS, etc.) – you can add steps here for deployment
