@@ -35,8 +35,8 @@ jobs:
         run: dotnet build Inno_Shop.Product.API/Inno_Shop.Product.API.csproj --no-restore --configuration Release
 
       # Run unit tests (if you have them)
-      #- name: Run unit tests
-      #  run: dotnet test --verbosity normal --configuration Release
+      - name: Run unit tests
+        run: dotnet test Inno_Shop.Product.API/Inno_Shop.Product.API.csproj --verbosity normal --configuration Release
 
       # Publish the app for deployment (optional step, based on your requirements)
       - name: Publish the API
