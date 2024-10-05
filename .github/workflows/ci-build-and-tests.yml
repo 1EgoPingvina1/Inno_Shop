@@ -42,7 +42,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.2.1-node20
         with:
-          name: PublishedAPI
+          name: PublishedAPI-Product
           path: ./output/product_api
           
   build-auth-api:
@@ -80,5 +80,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.2.1-node20
         with:
-          name: PublishedAPI
+          name: PublishedAPI-Auth
           path: ./output/auth_service
