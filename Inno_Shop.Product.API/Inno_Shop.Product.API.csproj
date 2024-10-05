@@ -10,6 +10,7 @@
     <ItemGroup>
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="MediatR" Version="12.4.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.16" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.20" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.16" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.16">
@@ -27,7 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Inno_Shop.Auth.Service\Inno_Shop.Auth.Service.csproj" />
       <ProjectReference Include="..\Inno_Shop.Product.Application\Inno_Shop.Product.Application.csproj" />
       <ProjectReference Include="..\Inno_Shop.Product.Persistence\Inno_Shop.Product.Persistence.csproj" />
     </ItemGroup>

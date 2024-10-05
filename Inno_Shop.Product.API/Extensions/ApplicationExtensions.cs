@@ -35,7 +35,7 @@ public static class ApplicationExtensions
 
         services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
     // Add MediatR for request handling and notification
-        services.AddMediatR(typeof(Program).Assembly);
+        services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
     // Register exception handling middleware for error handling
         services.AddTransient<AuthorizationMiddleware>();
