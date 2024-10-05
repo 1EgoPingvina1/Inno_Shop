@@ -46,6 +46,7 @@ jobs:
           path: ./output/product_api
           
   build-auth-api:
+    needs: build-product-api
     # Define the OS to run on (Linux, Windows, or Mac)
     runs-on: ubuntu-latest
 
