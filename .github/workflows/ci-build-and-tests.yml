@@ -105,5 +105,5 @@ jobs:
 
       # Run XUnit tests
       - name: Run XUnit tests
-        run: dotnet test Inno_Shop.Auth.Tests/Inno_Shop.Auth.Tests.csproj --configuration Release
+        run: dotnet test Inno_Shop_Auth.Tests/Inno_Shop_Auth.Tests.csproj --configuration Release
     
