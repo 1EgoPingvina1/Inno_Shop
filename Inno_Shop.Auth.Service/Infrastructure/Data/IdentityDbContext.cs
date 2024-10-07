@@ -2,16 +2,11 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inno_Shop.Authentification.Data;
+namespace Inno_Shop.Authentification.Infrastructure.Data;
 
 public class IdentityContext : IdentityDbContext<User, Role, string>
 {
     public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
     {
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
     }
 }

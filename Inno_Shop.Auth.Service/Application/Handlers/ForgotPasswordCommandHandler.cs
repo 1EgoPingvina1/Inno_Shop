@@ -16,12 +16,6 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
 
     public Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
-        // var user =await _userMandager.FindByEmailAsync(request.Email);
-        // if (user is null || !await _userMandager.IsEmailConfirmedAsync(user))
-        // {
-        //     return 
-        // }
             throw new System.NotImplementedException();
-        
     }
 }

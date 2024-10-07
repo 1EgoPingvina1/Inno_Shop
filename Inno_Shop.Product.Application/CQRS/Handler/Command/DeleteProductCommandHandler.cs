@@ -14,15 +14,13 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
     {
         _productRepository = productRepository;
         _unitOfwork = unitOfwork;
-        
     }
 
     public async Task<Unit> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(request.ProductId);
-        await _productRepository.DeleteProduct(product);
-        if (_unitOfwork.HasChanges())
-            await _unitOfwork.Complete();
+        _productRepository.DeleteProduct(product);
+        await _unitOfwork.Complete();
         return Unit.Value;
     }
 }

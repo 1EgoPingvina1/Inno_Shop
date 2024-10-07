@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Inno_Shop.Authentification.Presentation.Controllers;
 
@@ -24,73 +25,53 @@ public class AccountController : Controller
         _authRepository = authRepository;
     }
     
-    [NonAction]
-    public async Task<bool> CheckEmailExists([FromQuery] string email)
+    [Authorize]
+    [HttpGet("ConfirmEmail")]
+    public async Task<ActionResult> ConfirmEmail([FromQuery] string userId, string token)
     {
-        return await _userManager.FindByEmailAsync(email) != null;
+        await _authRepository.ConfirmEmailAsync(userId, token);
+        return Ok("Email has been confirmed");
     }
-
+    
     [HttpPost("Login")]
+    [SwaggerOperation("Sign in user in the system")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         => await _mediatr.Send(new LoginCommand() { LoginDto = loginDto });
     
     [AllowAnonymous]
     [HttpPost("Register")]
+    [SwaggerOperation("Sign up user in the system")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDto)
         => await _mediatr.Send(new RegisterCommand() { Registerdto = registerDto });
     
-    [HttpGet("ConfirmEmail")]
-    public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
-    {
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null) 
-            return NotFound(new HttpExeption(404, "User has not been found"));
-
-        var result = await _userManager.ConfirmEmailAsync(user, token);
-
-        if (!result.Succeeded) 
-            return BadRequest(new HttpExeption(400, result.Errors.ToString()));
-
-        return "Email confirmed successfully";
-    }
-    
     [AllowAnonymous]
     [HttpPost("ForgotPassword")]
-    public async Task<ActionResult<string>> ForgotPassword(ForgotPasswordDTO forgotPasswordDto)
+    [SwaggerOperation("Operation for reseting password with sending a code to email")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> ForgotPassword(ForgotPasswordCommand command)
     {
-        var user = await _userManager.FindByEmailAsync(forgotPasswordDto.Email);
-
-        if (user == null) 
-            return NotFound(new HttpExeption(404, "Email not found"));
-
-        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-        // Send the token to the user's email
-        // It is should be here
-        
-        return "Password reset token sent successfully";
+        await _authRepository.ForgotPasswordAsync(command);
+        return Ok("Your password has been sent to your email address");
     }
     
-    [HttpPost("ResetPassword")]
-    public async Task<ActionResult<string>> ResetPassword(ResetPasswordDTO resetPasswordDto)
-    {
-        var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+    [Authorize]
+    [HttpDelete("DeleteAccount/{userId}")]
+    [SwaggerOperation("Operation for deleting accounts")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<ActionResult> DeleteUser( string userId)
+        => Ok(await _mediatr.Send(new DeleteAccountCommand() { UserId = userId }));
 
-        if (user == null) 
-            return NotFound(new HttpExeption(404,"User is not found"));
-
-        var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.Password);
-
-        if (!result.Succeeded) 
-            return BadRequest(new HttpExeption(400,"Sending token has failed, try again latter"));
-
-        return "Password reset successfully";
-    }
-    
-    [HttpDelete("DeleteAccount")]
-    public async Task<ActionResult> DeleteUser([FromQuery] Guid userId) => await _authRepository.DeleteAsync(userId);
-    
+    [Authorize]
     [HttpPut("ChangeAccountDetails")]
-    public async Task<ActionResult<UserDTO>> UpdateUserDetails([FromBody] UserUpdateDto userDto) => await _authRepository.UpdateAsync(userDto);
+    public async Task<ActionResult<UserDTO>> UpdateUserDetails([FromBody] UpdateAccountCommand userDto)
+        => Ok(await _authRepository.UpdateAsync(userDto));
 }
