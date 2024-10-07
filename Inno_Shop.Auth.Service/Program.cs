@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Text;
 using FluentValidation;
+using Inno_Shop.Authentification.Application.Extensions;
+using Inno_Shop.Authentification.Application.Middleware;
 using Inno_Shop.Authentification.Domain.Interfaces;
 using Inno_Shop.Authentification.Domain.Models;
 using Inno_Shop.Authentification.Domain.Services;
@@ -19,69 +21,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddDbContext<IdentityContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")),ServiceLifetime.Transient);
+builder.Services.ConfigureSwagger();
+builder.Services.InjectIdentityServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: Bearer 1safsfsdfdfd",
-    });
-    
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-        {
-            new OpenApiSecurityScheme {
-                Reference = new OpenApiReference {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
-
-builder.Services.AddIdentityCore<User>(options => { })
-    .AddRoles<Role>()
-    .AddRoleManager<RoleManager<Role>>()
-    .AddSignInManager<SignInManager<User>>()
-    .AddEntityFrameworkStores<IdentityContext>();
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Token:Key") ?? string.Empty)),
-            ValidIssuer = builder.Configuration.GetValue<string>("Token:Issuer"),
-            ValidateIssuer = true,
-            ValidateAudience = false
-        };
-    });
-builder.Services.AddScoped<IAuthRepository,AuthRepository>();
-builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-builder.Services.AddCors(opt =>
-{
-    opt.AddPolicy("AllowAll", builder =>
-    {
-        builder.WithOrigins("http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -95,6 +38,6 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 app.Run();

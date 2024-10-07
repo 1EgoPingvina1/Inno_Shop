@@ -25,14 +25,8 @@ public class AuthRepository : IAuthRepository
     public async Task<UserDTO> LoginAsync(LoginCommand command)
     {
         var user = await _userManager.FindByEmailAsync(command.LoginDto.Email);
-
-        if (user == null) 
-            throw new HttpExeption(404,"Invalid login or password");
-
+        
         var result = await _signInManager.CheckPasswordSignInAsync(user, command.LoginDto.Password, false);
-
-        if (!result.Succeeded) 
-            throw new HttpExeption(401,"Invalid login");
         
         return new UserDTO
         {
