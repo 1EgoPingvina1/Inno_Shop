@@ -25,12 +25,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Inno_Shop.Auth.Service\Inno_Shop.Auth.Service.csproj" />
       <ProjectReference Include="..\Inno_Shop.Product.API\Inno_Shop.Product.API.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Integrations\" />
-      <Folder Include="Mocks\" />
     </ItemGroup>
 
 </Project>
