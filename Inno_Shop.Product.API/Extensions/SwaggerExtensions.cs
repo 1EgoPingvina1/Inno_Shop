@@ -1,8 +1,6 @@
-﻿
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 
-namespace Inno_Shop.Product.Service.Extensions;
+namespace Inno_Shop.Product.API.Extensions;
 
 public static class SwaggerExtensions
 {

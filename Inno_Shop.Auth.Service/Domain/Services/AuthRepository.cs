@@ -1,39 +1,38 @@
-﻿using Inno_Shop.Authentification.Domain.Interfaces;
+﻿using Inno_Shop.Authentification.Application.Commands;
+using Inno_Shop.Authentification.Domain.Interfaces;
 using Inno_Shop.Authentification.Domain.Models;
 using Inno_Shop.Authentification.Infrastructure.Security;
-using Inno_Shop.Authentification.Infrastructure.Validation;
 using Inno_Shop.Authentification.Presentation.DTO;
 using Inno_Shop.Authentification.Presentation.Errors;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Inno_Shop.Authentification.Domain.Services;
 public class AuthRepository : IAuthRepository
 {
     private readonly UserManager<User> _userManager;
-    private readonly RegisterValidator _registerValidator;
     private readonly ITokenService _tokenService;
     private readonly SignInManager<User> _signInManager;
 
-    public AuthRepository(UserManager<User> userManager, RegisterValidator registerValidator, ITokenService tokenService, SignInManager<User> signInManager)
+    public AuthRepository(UserManager<User> userManager, 
+        ITokenService tokenService, 
+        SignInManager<User> signInManager)
     {
         _userManager = userManager;
-        _registerValidator = registerValidator;
         _tokenService = tokenService;
         _signInManager = signInManager;
     }
 
-    public async Task<ActionResult<UserDTO>> LoginAsync(LoginDTO loginDTO)
+    public async Task<UserDTO> LoginAsync(LoginCommand command)
     {
-        var user = await _userManager.FindByEmailAsync(loginDTO.Email);
+        var user = await _userManager.FindByEmailAsync(command.LoginDto.Email);
 
         if (user == null) 
-            throw new ArgumentException("Invalid login or password");
+            throw new HttpExeption(404,"Invalid login or password");
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
+        var result = await _signInManager.CheckPasswordSignInAsync(user, command.LoginDto.Password, false);
 
         if (!result.Succeeded) 
-            throw new HttpExeption(403,"Invalid login");
+            throw new HttpExeption(401,"Invalid login");
         
         return new UserDTO
         {
@@ -43,53 +42,67 @@ public class AuthRepository : IAuthRepository
         };
     }
 
-    public async Task<ActionResult<UserDTO>> RegisterAsync(RegisterDTO registerDTO)
+    public async Task<UserDTO> RegisterAsync(RegisterCommand command)
     {
-        var validator = await _registerValidator.ValidateAsync(registerDTO);
-        if (!validator.IsValid)
-            throw new HttpExeption(409, "Check your data before trying to register.");
-        
         var user = new User()
         {
-            UserName = registerDTO.Username,
-            Email = registerDTO.Email, EmailConfirmed = false
+            UserName = command.Registerdto.Username,
+            Email = command.Registerdto.Email, 
+            EmailConfirmed = false
         };
         
-        var result = await _userManager.CreateAsync(user, registerDTO.Password);
+        var result = await _userManager.CreateAsync(user, command.Registerdto.Password);
         await _userManager.AddToRoleAsync(user, "Member");
         if (!result.Succeeded)
-            throw new HttpExeption(500, "Looks like the attempted has failed. Try again later.");
+            throw new HttpExeption(422, "Looks like the attempted has failed. Please check your data and try again.");
 
-        return new UserDTO
-        {
+        return new UserDTO {
             Username = user.UserName,
             Token = _tokenService.CreateToken(user),
             Email = user.Email
         };
     }
 
-    public Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDto)
+    public async Task<UserDTO> UpdateAsync(UpdateAccountCommand command)
     {
-        throw new NotImplementedException();
+        var user = await _userManager.FindByIdAsync(command.Id);
+        if (user is null)
+            throw new HttpExeption(404,"User has not been found");
+        user.UserName = command.Username;
+        user.Email = command.Email;
+        return new UserDTO
+        {
+            Username = user.UserName,
+            Email = user.Email
+        };    
     }
 
-    // public async Task<ActionResult<UserDTO>> UpdateAsync(UserUpdateDto userDTO)
-    // {
-    //     var user = await _userManager.GetUserAsync(User.Identity.Name);
-    //     if (user is null) 
-    //         throw new HttpExeption(404, "User has not been found");
-    //     user.PhoneNumber = userDTO.PhoneNumber;
-    //     await _userManager.UpdateAsync(user);
-    //     return user;
-    //
-    // }
-
-    public async Task<ActionResult> DeleteAsync(Guid userId)
+    public async Task ConfirmEmailAsync(string userId, string code)
     {
-        var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user is not null)
-            await _userManager.DeleteAsync(user);
-        
-        throw new HttpExeption(404,"User has not been found");
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null) 
+            throw new HttpExeption(404, "User has not been found");
+
+        var result = await _userManager.ConfirmEmailAsync(user, code);
+
+        if (!result.Succeeded) 
+            throw new HttpExeption(500, "Email confirmation failed");
+    }
+
+    public async Task ForgotPasswordAsync(ForgotPasswordCommand command)
+    {
+        var user = await _userManager.FindByEmailAsync(command.Email);
+
+        if (user == null) 
+            throw new HttpExeption(404, "Email not found");
+
+        await _userManager.GeneratePasswordResetTokenAsync(user);
+    }
+
+    public async Task DeleteAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        await _userManager.DeleteAsync(user);
     }
 }

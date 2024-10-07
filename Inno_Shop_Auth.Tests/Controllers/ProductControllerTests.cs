@@ -31,13 +31,13 @@ public class ProductControllerTests
         };
 
         _mockMediator.Setup(m => m.Send(It.IsAny<CreateProductCommand>(),default))
-            .ReturnsAsync(Unit.Value);
+            .ReturnsAsync(productDto);
         
         //Act
         var result = await _productController.CreateProduct(productDto);
         
         //Assert
-        Assert.Equal(Unit.Value, result);
+        Assert.Equal(productDto, result);
         _mockMediator.Verify(m => m.Send(It.IsAny<CreateProductCommand>(), default), Times.Once);
     }
     

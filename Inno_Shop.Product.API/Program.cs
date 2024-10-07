@@ -1,7 +1,8 @@
 using System.Text;
 using Inno_Shop.Product.API.Extensions;
 using Inno_Shop.Product.API.Middleware;
-using Inno_Shop.Product.Service.Extensions;
+using Inno_Shop.Product.Application;
+using Inno_Shop.Product.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -15,7 +16,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
 builder.Services.AddAuthenticationService(builder.Configuration);
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+
+//Configuration from other projects
+builder.Services.ConfigureApplication(builder.Configuration);
+builder.Services.ConfigurePersistence();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

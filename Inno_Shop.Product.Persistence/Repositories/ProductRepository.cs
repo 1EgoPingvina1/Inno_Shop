@@ -19,15 +19,13 @@ public class ProductRepository : IProductRepository
     
     public void AddProduct(Domain.Product product) =>  _context.Products.Add(product);
     
-    public async Task UpdateProduct(Domain.Product product)
+    public void UpdateProduct(Domain.Product product)
     {
         _context.Products.Update(product);
-        await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteProduct(Domain.Product product)
+    public void DeleteProduct(Domain.Product product)
     {
         _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
     }
 }
