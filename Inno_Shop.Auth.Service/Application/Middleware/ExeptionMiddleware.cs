@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
-using FluentValidation;
 using Inno_Shop.Authentification.Application.Exceptions;
 using ApplicationException = Inno_Shop.Authentification.Application.Exceptions.ApplicationException;
+using Serilog;
+using Serilog.Context;
 
 namespace Inno_Shop.Authentification.Application.Middleware;
 
@@ -18,7 +19,10 @@ internal sealed class ExceptionMiddleware : IMiddleware
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            await HandellExceptionHadlingMiddleware(context, ex);
+            using (LogContext.PushProperty("Exception", ex))
+            {
+                await HandellExceptionHadlingMiddleware(context, ex);
+            }
         }
     }
     

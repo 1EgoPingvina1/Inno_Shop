@@ -12,21 +12,25 @@ public class AuthRepository : IAuthRepository
     private readonly UserManager<User> _userManager;
     private readonly ITokenService _tokenService;
     private readonly SignInManager<User> _signInManager;
+    private readonly IForgetPasswordService _forgetPasswordService;
 
     public AuthRepository(UserManager<User> userManager, 
         ITokenService tokenService, 
-        SignInManager<User> signInManager)
+        SignInManager<User> signInManager, 
+        IForgetPasswordService forgetPasswordService)
     {
         _userManager = userManager;
         _tokenService = tokenService;
         _signInManager = signInManager;
+        _forgetPasswordService = forgetPasswordService;
     }
 
     public async Task<UserDTO> LoginAsync(LoginCommand command)
-    {
+    { 
         var user = await _userManager.FindByEmailAsync(command.LoginDto.Email);
-        
-        var result = await _signInManager.CheckPasswordSignInAsync(user, command.LoginDto.Password, false);
+        if (user is null)
+            throw new HttpExeption(StatusCodes.Status401Unauthorized, "Invalid username or password");
+        await _signInManager.CheckPasswordSignInAsync(user, command.LoginDto.Password, false);
         
         return new UserDTO
         {
@@ -38,7 +42,7 @@ public class AuthRepository : IAuthRepository
 
     public async Task<UserDTO> RegisterAsync(RegisterCommand command)
     {
-        var user = new User()
+        var user = new User
         {
             UserName = command.Registerdto.Username,
             Email = command.Registerdto.Email, 
@@ -46,14 +50,15 @@ public class AuthRepository : IAuthRepository
         };
         
         var result = await _userManager.CreateAsync(user, command.Registerdto.Password);
+        
         await _userManager.AddToRoleAsync(user, "Member");
         if (!result.Succeeded)
             throw new HttpExeption(422, "Looks like the attempted has failed. Please check your data and try again.");
 
         return new UserDTO {
             Username = user.UserName,
-            Token = _tokenService.CreateToken(user),
-            Email = user.Email
+            Email = user.Email,
+            Token = _tokenService.CreateToken(user)
         };
     }
 
@@ -91,7 +96,8 @@ public class AuthRepository : IAuthRepository
         if (user == null) 
             throw new HttpExeption(404, "Email not found");
 
-        await _userManager.GeneratePasswordResetTokenAsync(user);
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        _forgetPasswordService.SaveForgetPassword(user.Id,token);
     }
 
     public async Task DeleteAsync(string userId)
@@ -99,4 +105,5 @@ public class AuthRepository : IAuthRepository
         var user = await _userManager.FindByIdAsync(userId);
         await _userManager.DeleteAsync(user);
     }
+    
 }

@@ -46,7 +46,7 @@ public class AuthorizationMiddleware : IMiddleware
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(".4tRL*8z*]7oY(NI^3MS$mdrn9}kVKXctn64vW/JVYuZf-E#gqqJB]<d-SkzvN+ee25204")),
-            ValidIssuer = "https://localhost:7127"
+            ValidIssuer = "AuthAPI"
         };
         try
         {

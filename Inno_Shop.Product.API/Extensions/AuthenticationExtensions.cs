@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-
 namespace Inno_Shop.Product.API.Extensions;
 
 public static class AuthenticationExtensions

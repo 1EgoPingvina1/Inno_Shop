@@ -1,4 +1,5 @@
 ﻿using Inno_Shop.Authentification.Application.Commands;
+using Inno_Shop.Authentification.Domain.Interfaces;
 using Inno_Shop.Authentification.Domain.Models;
 using Inno_Shop.Authentification.Domain.Services;
 using Inno_Shop.Authentification.Infrastructure.Security;
@@ -16,6 +17,7 @@ public class AuthRepositoryFake
     private readonly Mock<SignInManager<User>> _signInManagerMock;
     private readonly Mock<ITokenService> _tokenServiceMock;
     private readonly AuthRepository _authRepository;
+    private readonly Mock<IForgetPasswordService> _forgetPasswordService;
     
     public AuthRepositoryFake()
     {
@@ -26,11 +28,11 @@ public class AuthRepositoryFake
             Mock.Of<IHttpContextAccessor>(),
             Mock.Of<IUserClaimsPrincipalFactory<User>>(),
             null, null, null, null);
-
         _tokenServiceMock = new Mock<ITokenService>();
+        _forgetPasswordService = new Mock<IForgetPasswordService>();
 
         // Create the AuthRepository instance
-        _authRepository = new AuthRepository(_userManagerMock.Object, _tokenServiceMock.Object, _signInManagerMock.Object);
+        _authRepository = new AuthRepository(_userManagerMock.Object, _tokenServiceMock.Object, _signInManagerMock.Object,_forgetPasswordService.Object);
     }
     
     [Fact]
@@ -41,7 +43,6 @@ public class AuthRepositoryFake
         {
             LoginDto = new LoginDTO("test@example.com", "Password123")
         };
-
         var user = new User
         {
             Email = loginCommand.LoginDto.Email,
@@ -78,13 +79,7 @@ public class AuthRepositoryFake
                 Username = "newuser"
             }
         };
-
-        var user = new User
-        {
-            Email = registerCommand.Registerdto.Email,
-            UserName = registerCommand.Registerdto.Username
-        };
-
+        
         _userManagerMock.Setup(um => um.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
                         .ReturnsAsync(IdentityResult.Success);
         _userManagerMock.Setup(um => um.AddToRoleAsync(It.IsAny<User>(), "Member"))

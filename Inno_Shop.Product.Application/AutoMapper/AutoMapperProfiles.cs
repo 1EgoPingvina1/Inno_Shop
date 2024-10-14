@@ -7,6 +7,6 @@ public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
-        CreateMap<Domain.Product, ProductDTO>();
+        CreateMap<Domain.Model.Product, ProductDTO>();
     }
 }

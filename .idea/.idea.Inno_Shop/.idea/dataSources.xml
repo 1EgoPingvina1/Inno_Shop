@@ -22,5 +22,13 @@
       <jdbc-url>Data source=DESKTOP-15EDNOQ\SQLEXPRESS;Database=Inno_Shop.Auth;Trusted_Connection=True;TrustServerCertificate=True</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="Microsoft SQL Server (JetBrains) [2]" uuid="88cbe796-5311-4e58-b168-322b3186f724">
+      <driver-ref>sqlserver.jb</driver-ref>
+      <synchronize>true</synchronize>
+      <configured-by-url>true</configured-by-url>
+      <jdbc-driver>com.jetbrains.jdbc.sqlserver.SqlServerDriver</jdbc-driver>
+      <jdbc-url>Data source=DESKTOP-15EDNOQ\SQLEXPRESS;Database=Inno_Shop.Product;Trusted_Connection=True;TrustServerCertificate=True</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
