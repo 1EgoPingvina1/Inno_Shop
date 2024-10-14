@@ -62,7 +62,7 @@
 
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone https://github.com/username/inno_shop.git
+   git clone https://github.com/1EgoPingvina1/Inno_Shop.git
 
 2. **Настройка Docker:**
    ```bash
