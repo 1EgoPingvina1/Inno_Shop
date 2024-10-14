@@ -9,10 +9,8 @@ public class ValidationPipelineStep<TRequest, TResponse> : IPipelineBehavior<TRe
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public ValidationPipelineStep(IEnumerable<IValidator<TRequest>> validators)
-    {
-        _validators = validators;
-    }
+    public ValidationPipelineStep(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
+    
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         if (_validators.Any())

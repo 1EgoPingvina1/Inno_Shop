@@ -7,5 +7,5 @@ public class MainDbContext : DbContext
     {
         
     }
-    public DbSet<Domain.Product> Products { get; set; }
+    public DbSet<Domain.Model.Product> Products { get; set; }
 }

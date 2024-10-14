@@ -2,9 +2,9 @@
 
 public interface IProductRepository
 {
-    Task<List<Domain.Product>> GetAllAsync();
-    Task<Domain.Product?> GetByIdAsync(int id);
-    void AddProduct(Domain.Product product);
-    void UpdateProduct(Domain.Product product);
-    void DeleteProduct(Domain.Product product);
+    Task<List<Domain.Model.Product>> GetAllAsync();
+    Task<Domain.Model.Product?> GetByIdAsync(int id);
+    void AddProduct(Domain.Model.Product product);
+    void UpdateProduct(Domain.Model.Product product);
+    void DeleteProduct(Domain.Model.Product product);
 }

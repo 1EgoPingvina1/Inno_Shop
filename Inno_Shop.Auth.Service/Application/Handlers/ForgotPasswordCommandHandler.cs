@@ -16,6 +16,6 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
 
     public Task<Unit> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
     {
-            throw new System.NotImplementedException();
+        throw new System.NotImplementedException();
     }
 }

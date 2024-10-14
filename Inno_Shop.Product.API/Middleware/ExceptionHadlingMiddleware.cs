@@ -37,13 +37,11 @@ public class ExceptionHadlingMiddleware : IMiddleware
             detail = exception.Message,
             errors = GetErrors(exception)
         };
-        
         httpContext.Response.ContentType = "application/json";
         
         httpContext.Response.StatusCode = statusCode;
         
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
-        
     }
     
     private static string GetTitle(Exception exception) =>
@@ -67,7 +65,6 @@ public class ExceptionHadlingMiddleware : IMiddleware
         InvalidModelProperty[] errors = null!;
         if(exception is InnoValidationExeption validationException)
             errors = validationException.ErrorsDictionary;
-        
         return errors;
     }
 }

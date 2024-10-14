@@ -1,11 +1,9 @@
 ﻿using Inno_Shop.Authentification.Application.Commands;
 using Inno_Shop.Authentification.Domain.Interfaces;
-using Inno_Shop.Authentification.Domain.Models;
 using Inno_Shop.Authentification.Presentation.DTO;
 using Inno_Shop.Authentification.Presentation.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -15,12 +13,10 @@ namespace Inno_Shop.Authentification.Presentation.Controllers;
 [Route("/api/[controller]")]
 public class AccountController : Controller
 {
-    private readonly UserManager<User> _userManager;
     private readonly IMediator _mediatr;
     private readonly IAuthRepository _authRepository;
-    public AccountController(UserManager<User> userManager, IMediator mediatr, IAuthRepository authRepository)
+    public AccountController(IMediator mediatr, IAuthRepository authRepository)
     {
-        _userManager = userManager;
         _mediatr = mediatr;
         _authRepository = authRepository;
     }

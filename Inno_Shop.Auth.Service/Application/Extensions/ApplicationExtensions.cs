@@ -19,7 +19,8 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddAutoMapper(typeof(Program));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
+        services.AddTransient<IForgetPasswordService, ForgetPasswordService>();
+        
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
         services.AddCors(opt =>
         {

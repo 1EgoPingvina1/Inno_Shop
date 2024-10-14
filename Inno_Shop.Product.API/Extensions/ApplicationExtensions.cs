@@ -3,7 +3,6 @@ using FluentValidation;
 using Inno_Shop.Product.API.Middleware;
 using Inno_Shop.Product.API.Pipeline;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Inno_Shop.Product.API.Extensions;
 
@@ -19,7 +18,7 @@ public static class ApplicationExtensions
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
     // Add MediatR for request handling and notification
-        services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(Program).Assembly));
+        // services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
     // Register exception handling middleware for error handling
         services.AddTransient<AuthorizationMiddleware>();

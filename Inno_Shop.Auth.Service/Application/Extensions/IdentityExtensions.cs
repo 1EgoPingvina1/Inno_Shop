@@ -12,7 +12,6 @@ public static class IdentityExtensions
 {
     public static IServiceCollection InjectIdentityServices(this IServiceCollection services, IConfiguration configuration)
     {
-        
         services.AddDbContext<IdentityContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")),ServiceLifetime.Transient);
 
@@ -20,7 +19,8 @@ public static class IdentityExtensions
             .AddRoles<Role>()
             .AddRoleManager<RoleManager<Role>>()
             .AddSignInManager<SignInManager<User>>()
-            .AddEntityFrameworkStores<IdentityContext>();
+            .AddEntityFrameworkStores<IdentityContext>()
+            .AddDefaultTokenProviders();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -35,6 +35,9 @@ public static class IdentityExtensions
                     ValidateAudience = false
                 };
             });
+        
+        services.AddTransient<IUserTwoFactorTokenProvider<User>, EmailTokenProvider<User>>();
+
         return services;
     }
 }
